@@ -1,0 +1,10 @@
+<parameters>
+        <index>C:\\dev\\Indexes_Lucene_1.0\\toy_novectors</index>
+        <trecFormat>true</trecFormat>
+        <rule>dirichlet:2000</rule>
+        <count>100</count>
+  <query>
+    <number> 51 </number>
+    <text>keyboard reviews</text>
+  </query>
+</parameters>
