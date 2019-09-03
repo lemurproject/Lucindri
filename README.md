@@ -45,7 +45,7 @@ ignoreCase=[true | false]
 
 Running the LucindriIndexer can be done from inside an IDE, invoking the main class (org.lemurproject.lucindri.indexer.BuildIndex), or using the jar file in the *target* directory like this:
 ```
-java -jar -Xmx16G LucindriIndexer index.properties
+java -jar -Xmx16G LucindriIndexer.jar index.properties
 ```
 
 ## Lucindri Searcher
@@ -54,21 +54,43 @@ The Lucindri Searcher has Indri Dirichlet and Jelinek-Mercer smoothing rules (a.
 The main class in searcher is: org.lemurproject.lucindri.searche.IndriSearch.  It takes an xml parameter file, which contains queries, as an argument.  See indriQueries.xml in the searcher directory as an example.  The query parameters follow the same format as Indri.  
 
 ### Retrieval Parameters
-+ index: path to an Indri Repository. Specified as <index>/path/to/repository</index> in the parameter file and as -index=/path/to/repository on the command line. This element can be specified multiple times to combine Repositories.
-+ count: an integer value specifying the maximum number of results to return for a given query. Specified as <count>number</count> in the parameter file and as -count=number on the command line.
-+ query: An indri query language query to run. This element can be specified multiple times.
-+ rule: specifies the smoothing rule (TermScoreFunction) to apply. Format of the rule is: ( key ":" value ) [ "," key ":" value ]*
-```
++ **index:** path to an Indri Repository. Specified as <index>/path/to/repository</index> in the parameter file and as -index=/path/to/repository on the command line. This element can be specified multiple times to combine Repositories.
++ **count:** an integer value specifying the maximum number of results to return for a given query. Specified as <count>number</count> in the parameter file and as -count=number on the command line.
++ **query:** An indri query language query to run. This element can be specified multiple times.
++ **rule:** specifies the smoothing rule (TermScoreFunction) to apply. Format of the rule is: ( key ":" value ) [ "," key ":" value ]*
+
 Here's an example rule  in parameter file format:
+```
 <rule>dirichlet:2000</rule>
+```
 
 This corresponds to Dirichlet smoothing with mu equal to 2000.
 
-Valid methods:
-dirichlet
+**Valid methods:**
++ dirichlet
 (also 'd', 'dir') (default mu=2500)
-jelinek-mercer
++ jelinek-mercer
 (also 'jm', 'linear') (default collectionLambda=0.4, documentLambda=0.0), collectionLambda is also known as just "lambda", either will work
+
+Running the LucindriSearcher can be done from inside an IDE, invoking the main class (org.lemurproject.lucindri.searcher.IndriSearch), or using the jar file in the *target* directory like this:
+```
+java -jar -Xmx16G LucindriSearcher.jar queries.xml
 ```
 
+## Lucindri Query Language
 
+Lucindri implements these Indri belief operators:
++ #combine
++ #or
++ #not
++ #want
++ #wsum
++ #max
++ #scoreif
++ #scoreifnot
+
+And these term operators:
++ #band
++ #syn
++ #od
++ #uw
