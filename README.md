@@ -115,6 +115,7 @@ java -jar -Xmx16G LucindriSearcher.jar queries.xml
 
 And these term operators:
 + #band (boolean and)
+  + #band(Q) is scored as #uw(Q). That is, an unordered window of the length of the document.
 + #windowN/#nearN/#N (ordered window or near)
   + ordered window - terms must appear ordered, with at most N-1 terms between each
   + Example: #2(white house) -- matches "white * house" (where * is any word or null)
