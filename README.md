@@ -33,8 +33,9 @@ indexDirectory=[Directory where index will be written]
 indexName=[Name of the index]
 
 #field options
-#If index.fulltext is set to true, a field with all document text is created
-indexFullText=[true | false]
+#If index.fulltext is set to true, a field with all document text is created.  This is recommended.
+#fulltext is the default field for queries if it is indexed
+indexFullText=[true (recommended) | false]
 fieldNames=[Comma separated list of field names to be stored (e.g. title, url, body)]
 
 #analyzer options
@@ -51,13 +52,14 @@ java -jar -Xmx16G LucindriIndexer.jar index.properties
 ## Lucindri Searcher
 The Lucindri Searcher has Indri Dirichlet and Jelinek-Mercer smoothing rules (a.k.a. Similarity in Lucene) implemented.  The results are printed in TREC format.
 
-The main class in searcher is: org.lemurproject.lucindri.searche.IndriSearch.  It takes an xml parameter file, which contains queries, as an argument.  See indriQueries.xml in the searcher directory as an example.  The query parameters follow the same format as Indri.  
+The main class in searcher is: org.lemurproject.lucindri.searche.IndriSearch.  It takes an xml parameter file, which contains queries, as an argument.  The query parameters follow the same format as Indri.  
 
 ### Retrieval Parameters
 + **index:** path to an Indri Repository. Specified as <index>/path/to/repository</index> in the parameter file and as -index=/path/to/repository on the command line. This element can be specified multiple times to combine Repositories.
 + **count:** an integer value specifying the maximum number of results to return for a given query. Specified as <count>number</count> in the parameter file and as -count=number on the command line.
 + **query:** An indri query language query to run. This element can be specified multiple times.
-+ **rule:** specifies the smoothing rule (TermScoreFunction) to apply. Format of the rule is: ( key ":" value ) [ "," key ":" value ]*
++ **rule:** specifies the smoothing rule (TermScoreFunction) to apply.
+  + Format of the rule is: ( key ":" value ) [ "," key ":" value ]*
 
 **Valid methods:**
 + dirichlet
@@ -94,6 +96,14 @@ java -jar -Xmx16G LucindriSearcher.jar queries.xml
 ## Lucindri Query Language
 
 ### Lucindri Fields
+Lucindri documents are stored in fields, which are specified at index time.  If indexFullText is set to true during indexing, a *fulltext* field is created and is used as the default query field if no field is specified.
+
+You can search any field by typing the term you are looking for followed by a period "." and then the field name.
+
+For example:
+```
+President.fulltext Obama.title
+```
 
 ### Lucindri implements these Indri belief operators:
 + #combine/#and
@@ -109,9 +119,9 @@ java -jar -Xmx16G LucindriSearcher.jar queries.xml
 + #max
   + Example: #max(dog train) - returns maximum of b(dog) and b(train)
 + #scoreif (filter require)
-  + Example: #scoreif( sheep #combine(dolly cloning) ) - only consider those documents matching the query "sheep" and rank them according to the query #combine(dolly cloning).
+  + Example: #scoreif( sheep #combine(dolly cloning) ) - only consider those documents matching the query "sheep" and rank them according to the query #combine(dolly cloning)
 + #scoreifnot (filter reject)
-  + Example: #scoreifnot( parton #combine(dolly cloning) ) - only consider those documents NOT matching the query "parton" and rank them according to the query #combine(dolly cloning).
+  + Example: #scoreifnot( parton #combine(dolly cloning) ) - only consider those documents NOT matching the query "parton" and rank them according to the query #combine(dolly cloning)
 
 And these term operators:
 + #band (boolean and)
