@@ -59,18 +59,32 @@ The main class in searcher is: org.lemurproject.lucindri.searche.IndriSearch.  I
 + **query:** An indri query language query to run. This element can be specified multiple times.
 + **rule:** specifies the smoothing rule (TermScoreFunction) to apply. Format of the rule is: ( key ":" value ) [ "," key ":" value ]*
 
-Here's an example rule  in parameter file format:
+**Valid methods:**
++ dirichlet
+(also 'd', 'dir') (default mu=2000)
++ jelinek-mercer
+(also 'jm', 'linear') (default collectionLambda=0.4, documentLambda=0.0), collectionLambda is also known as just "lambda", either will work
+
+Here is an example rule  in parameter file format:
 ```
 <rule>dirichlet:2000</rule>
 ```
 
 This corresponds to Dirichlet smoothing with mu equal to 2000.
 
-**Valid methods:**
-+ dirichlet
-(also 'd', 'dir') (default mu=2500)
-+ jelinek-mercer
-(also 'jm', 'linear') (default collectionLambda=0.4, documentLambda=0.0), collectionLambda is also known as just "lambda", either will work
+Here is an example query file:
+```
+<parameters>
+        <index>PATH_TO_INDEX</index>
+        <trecFormat>true</trecFormat>
+        <rule>dirichlet:2000</rule>
+        <count>100</count>
+  <query>
+    <number> 51 </number>
+    <text>#5(president clinton)</text>
+  </query>
+</parameters>
+```
 
 Running the LucindriSearcher can be done from inside an IDE, invoking the main class (org.lemurproject.lucindri.searcher.IndriSearch), or using the jar file in the *target* directory like this:
 ```
@@ -85,11 +99,15 @@ java -jar -Xmx16G LucindriSearcher.jar queries.xml
 + #combine/#and
   + Example: #combine(dog training)
 + #or
-  + Example: #or(
+  + Example: #or(dog cat)
 + #not
+  + Example: #and(president #not(obama))
 + #wand (weighted and)
+  + Example: #wand(0.2 president 0.8 obama)
 + #wsum (weighted sum)
+  + Example: #wsum(0.2 presdient 0.8 obama)
 + #max
+  + Example: #max(dog train) - returns maximum of b(dog) and b(train)
 + #scoreif (filter require)
   + Example: #scoreif( sheep #combine(dolly cloning) ) - only consider those documents matching the query "sheep" and rank them according to the query #combine(dolly cloning).
 + #scoreifnot (filter reject)
