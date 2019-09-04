@@ -79,18 +79,29 @@ java -jar -Xmx16G LucindriSearcher.jar queries.xml
 
 ## Lucindri Query Language
 
-Lucindri implements these Indri belief operators:
-+ #combine
+### Lucindri Fields
+
+### Lucindri implements these Indri belief operators:
++ #combine/#and
+  + Example: #combine(dog training)
 + #or
+  + Example: #or(
 + #not
-+ #want
-+ #wsum
++ #wand (weighted and)
++ #wsum (weighted sum)
 + #max
-+ #scoreif
-+ #scoreifnot
++ #scoreif (filter require)
+  + Example: #scoreif( sheep #combine(dolly cloning) ) - only consider those documents matching the query "sheep" and rank them according to the query #combine(dolly cloning).
++ #scoreifnot (filter reject)
+  + Example: #scoreifnot( parton #combine(dolly cloning) ) - only consider those documents NOT matching the query "parton" and rank them according to the query #combine(dolly cloning).
 
 And these term operators:
-+ #band
-+ #syn
-+ #od
-+ #uw
++ #band (boolean and)
++ #windowN/#nearN/#N (ordered window or near)
+  + ordered window - terms must appear ordered, with at most N-1 terms between each
+  + Example: #2(white house) -- matches "white * house" (where * is any word or null)
++ #uw (unordered window)
+  + unordered window - all terms must appear within window of length N in any order
+  + Example: #uw2(white house) -- matches "white house" and "house white"
++ #syn (synonym)
+  + Example: #syn( #1(united states) #1(united states of america) )
