@@ -88,11 +88,11 @@ The main class in searcher is: org.lemurproject.lucindri.searche.IndriSearch.  I
 + dirichlet
 (also 'd', 'dir') (default mu=2000)
 + jelinek-mercer
-(also 'jm', 'linear') (default collectionLambda=0.4), collectionLambda is also known as just "lambda", either will work
+(also 'jm', 'linear') (default collectionLambda=0.4), collectionLambda is also known as just "lambda"
 
 Here is an example rule  in parameter file format:
 ```
-<rule>dirichlet:2000</rule>
+<rule>dirichlet:1000</rule>
 ```
 OR
 ```
