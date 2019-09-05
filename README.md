@@ -69,7 +69,7 @@ ignoreCase=true
 
 Running the LucindriIndexer can be done from inside an IDE, invoking the main class (org.lemurproject.lucindri.indexer.BuildIndex), or using the jar file in the *target* directory.  Use at least 2G of heap space (preferably 4G - 8G).
 ```
-java -jar -Xmx4G LucindriIndexer.jar index.properties
+java -jar -Xmx4G LucindriIndexer-1.0-jar-with-dependencies.jar index.properties
 ```
 
 ## Lucindri Searcher
@@ -121,7 +121,7 @@ Here is an example query file:
 
 Running the LucindriSearcher can be done from inside an IDE, invoking the main class (org.lemurproject.lucindri.searcher.IndriSearch), or using the jar file in the *target* directory.  Use at least 2G of heap space (preferably 4G - 8G).
 ```
-java -jar -Xmx4G LucindriSearcher.jar queries.xml
+java -jar -Xmx4G LucindriSearcher-1.0-jar-with-dependencies.jar queries.xml
 ```
 
 ## Lucindri Query Language
