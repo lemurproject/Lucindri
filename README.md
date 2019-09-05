@@ -44,7 +44,7 @@ removeStopwords=[true | false]
 ignoreCase=[true | false]
 ```
 
-Example index.properties
+Example index.properties:
 ```
 #implementation options
 # documentFormat options = text, wsj, gov2, json, wapo, warc, trectext, cw09, cw12, car, marco
@@ -93,6 +93,10 @@ The main class in searcher is: org.lemurproject.lucindri.searche.IndriSearch.  I
 Here is an example rule  in parameter file format:
 ```
 <rule>dirichlet:2000</rule>
+```
+OR
+```
+<rule>jm:.3</rule>
 ```
 
 This corresponds to Dirichlet smoothing with mu equal to 2000.
