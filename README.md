@@ -44,9 +44,32 @@ removeStopwords=[true | false]
 ignoreCase=[true | false]
 ```
 
-Running the LucindriIndexer can be done from inside an IDE, invoking the main class (org.lemurproject.lucindri.indexer.BuildIndex), or using the jar file in the *target* directory like this:
+Example index.properties
 ```
-java -jar -Xmx16G LucindriIndexer.jar index.properties
+#implementation options
+# documentFormat options = text, wsj, gov2, json, wapo, warc, trectext, cw09, cw12, car, marco
+documentFormat=cw09
+
+#data options
+dataDirectory=/usr/home/data/cw09data
+indexDirectory=/usr/home/
+indexName=CW09_lucindri_index
+
+#field options
+#If index.fulltext is set to true, a field with all document text is created.  This is recommended.
+#fulltext is the default field for queries if it is indexed
+indexFullText=true
+fieldNames=title,url
+
+#analyzer options
+stemmer=kstem
+removeStopwords=true
+ignoreCase=true
+```
+
+Running the LucindriIndexer can be done from inside an IDE, invoking the main class (org.lemurproject.lucindri.indexer.BuildIndex), or using the jar file in the *target* directory.  Use at least 2G of heap space (preferably 4G - 8G).
+```
+java -jar -Xmx4G LucindriIndexer.jar index.properties
 ```
 
 ## Lucindri Searcher
@@ -65,7 +88,7 @@ The main class in searcher is: org.lemurproject.lucindri.searche.IndriSearch.  I
 + dirichlet
 (also 'd', 'dir') (default mu=2000)
 + jelinek-mercer
-(also 'jm', 'linear') (default collectionLambda=0.4, documentLambda=0.0), collectionLambda is also known as just "lambda", either will work
+(also 'jm', 'linear') (default collectionLambda=0.4), collectionLambda is also known as just "lambda", either will work
 
 Here is an example rule  in parameter file format:
 ```
@@ -85,12 +108,16 @@ Here is an example query file:
     <number> 51 </number>
     <text>#5(president clinton)</text>
   </query>
+  <query>
+     <number> 52 </number>
+     <text> #combine( avp ) </text>
+   </query>
 </parameters>
 ```
 
-Running the LucindriSearcher can be done from inside an IDE, invoking the main class (org.lemurproject.lucindri.searcher.IndriSearch), or using the jar file in the *target* directory like this:
+Running the LucindriSearcher can be done from inside an IDE, invoking the main class (org.lemurproject.lucindri.searcher.IndriSearch), or using the jar file in the *target* directory.  Use at least 2G of heap space (preferably 4G - 8G).
 ```
-java -jar -Xmx16G LucindriSearcher.jar queries.xml
+java -jar -Xmx4G LucindriSearcher.jar queries.xml
 ```
 
 ## Lucindri Query Language
@@ -106,7 +133,7 @@ President.fulltext Obama.title
 ```
 
 ### Lucindri implements these Indri belief operators:
-+ #combine/#and
++ #combine (equivalent to #and)
   + Example: #combine(dog training)
 + #or
   + Example: #or(dog cat)
@@ -125,12 +152,12 @@ President.fulltext Obama.title
 
 And these term operators:
 + #band (boolean and)
-  + #band(Q) is scored as #uw(Q). That is, an unordered window of the length of the document.
-+ #windowN/#nearN/#N (ordered window or near)
+  + #band(Q) is scored as #uw(Q) - an unordered window of the length of the document
++ #N (also known as #nearN and #windowN)
   + ordered window - terms must appear ordered, with at most N-1 terms between each
-  + Example: #2(white house) -- matches "white * house" (where * is any word or null)
-+ #uw (unordered window)
+  + Example: #2(white house) - matches "white * house" (where * is any word or null)
++ #uwN (unordered window)
   + unordered window - all terms must appear within window of length N in any order
-  + Example: #uw2(white house) -- matches "white house" and "house white"
+  + Example: #uw2(white house) - matches "white house" and "house white"
 + #syn (synonym)
   + Example: #syn( #1(united states) #1(united states of america) )
