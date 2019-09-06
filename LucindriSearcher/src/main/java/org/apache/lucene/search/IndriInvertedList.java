@@ -78,7 +78,10 @@ public class IndriInvertedList {
 		for (TreeMap<Integer, IndriDocumentPosting> postings : docPostings.values()) {
 			totalTermFreq += postings.size();
 		}
-		TermStatistics termStats = new TermStatistics(dummyTerm.bytes(), docFreq, totalTermFreq);
+		TermStatistics termStats = null;
+		if (docFreq > 0) {
+			termStats = new TermStatistics(dummyTerm.bytes(), docFreq, totalTermFreq);
+		}
 
 		return termStats;
 	}

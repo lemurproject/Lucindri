@@ -65,9 +65,12 @@ public abstract class IndriTermOpWeight extends IndriWeight {
 
 		IndriTermOpEnum postingsEnum = getProximityIterator(iterators);
 		TermStatistics termStats = postingsEnum.getInvList().getTermStatistics();
-		this.simScorer = similarity.scorer(boost, collectionStats, termStats);
-		LeafSimScorer leafScorer = new LeafSimScorer(simScorer, context.reader(), field, true);
-		Scorer scorer = new IndriTermOpScorer(this, postingsEnum, leafScorer);
+		Scorer scorer = null;
+		if (termStats != null) {
+			this.simScorer = similarity.scorer(boost, collectionStats, termStats);
+			LeafSimScorer leafScorer = new LeafSimScorer(simScorer, context.reader(), field, true);
+			scorer = new IndriTermOpScorer(this, postingsEnum, leafScorer);
+		}
 		return scorer;
 	}
 

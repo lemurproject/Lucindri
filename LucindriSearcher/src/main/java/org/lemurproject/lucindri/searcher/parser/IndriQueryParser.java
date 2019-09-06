@@ -19,6 +19,9 @@ import java.util.List;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.IndexableField;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanClause.Occur;
@@ -56,13 +59,32 @@ public class IndriQueryParser {
 	private final static String SCOREIF = "scoreif";
 	private final static String SCOREIFNOT = "scoreifnot";
 	private final static String SYNONYM = "syn";
-
-	private final static String DEFAULT_FIELD = "fulltext";
+	private final static String DEFAULT_FIELD_NAME = "fulltext";
 
 	private final Analyzer analyzer;
+	private String defaultField;
 
-	public IndriQueryParser() {
+	public IndriQueryParser(IndexReader reader) throws IOException {
 		analyzer = getConfigurableAnalyzer();
+		defaultField = getDefaultField(reader);
+	}
+
+	private String getDefaultField(IndexReader reader) throws IOException {
+		List<String> fields = new ArrayList<String>();
+		Document doc = reader.document(1);
+		for (IndexableField field : doc.getFields()) {
+			String fieldName = field.name().toLowerCase();
+			if (!fieldName.contains("id")) {
+				fields.add(fieldName);
+			}
+		}
+		String defaultFieldName = null;
+		if (fields.contains(DEFAULT_FIELD_NAME)) {
+			defaultFieldName = DEFAULT_FIELD_NAME;
+		} else if (fields.size() > 0) {
+			defaultFieldName = fields.get(0);
+		}
+		return defaultFieldName;
 	}
 
 	private Analyzer getConfigurableAnalyzer() {
@@ -140,7 +162,7 @@ public class IndriQueryParser {
 			operatorDistance = Integer.parseInt(substrings[1]);
 		}
 		operatorQuery.setOperator(operatorNameLowerCase);
-		operatorQuery.setField("fulltext");
+		operatorQuery.setField(defaultField);
 		operatorQuery.setDistance(operatorDistance);
 		operatorQuery.setOccur(occur);
 
@@ -232,8 +254,8 @@ public class IndriQueryParser {
 		String field = null;
 		String term = null;
 
-		if (delimiter < 0) { // .fulltext is the default field
-			field = "fulltext";
+		if (delimiter < 0) {
+			field = defaultField;
 			term = token;
 		} else { // Remove the field from the token
 			field = token.substring(delimiter + 1).toLowerCase();
@@ -343,7 +365,10 @@ public class IndriQueryParser {
 
 	private Query getLuceneQuery(QueryParserQuery queryTree) {
 		BooleanClause clause = createBooleanClause(queryTree);
-		Query query = clause.getQuery();
+		Query query = null;
+		if (clause != null) {
+			query = clause.getQuery();
+		}
 		return query;
 	}
 
@@ -354,34 +379,42 @@ public class IndriQueryParser {
 
 			// Create clauses for subqueries
 			List<BooleanClause> clauses = new ArrayList<>();
-			for (QueryParserQuery subquery : operatorQuery.getSubqueries()) {
-				BooleanClause clause = createBooleanClause(subquery);
-				clauses.add(clause);
-			}
+			if (operatorQuery.getSubqueries() != null) {
+				for (QueryParserQuery subquery : operatorQuery.getSubqueries()) {
+					BooleanClause clause = createBooleanClause(subquery);
+					if (clause != null) {
+						clauses.add(clause);
+					}
+				}
 
-			// Create Operator
-			if (operatorQuery.getOperator().equalsIgnoreCase(OR)) {
-				query = new IndriOrQuery(clauses);
-			} else if (operatorQuery.getOperator().equalsIgnoreCase(WSUM)) {
-				query = new IndriWeightedSumQuery(clauses);
-			} else if (operatorQuery.getOperator().equalsIgnoreCase(MAX)) {
-				query = new IndriMaxQuery(clauses);
-			} else if (operatorQuery.getOperator().equalsIgnoreCase(WAND)) {
-				query = new IndriAndQuery(clauses);
-			} else if (operatorQuery.getOperator().equalsIgnoreCase(NEAR)) {
-				query = new IndriNearQuery(clauses, operatorQuery.getField(), operatorQuery.getDistance());
-			} else if (operatorQuery.getOperator().equalsIgnoreCase(WINDOW)) {
-				query = new IndriWindowQuery(clauses, operatorQuery.getField(), operatorQuery.getDistance());
-			} else if (operatorQuery.getOperator().equalsIgnoreCase(BAND)) {
-				query = new IndriBandQuery(clauses, operatorQuery.getField());
-			} else if (operatorQuery.getOperator().equalsIgnoreCase(SCOREIFNOT)) {
-				query = new IndriScoreIfNotQuery(clauses);
-			} else if (operatorQuery.getOperator().equalsIgnoreCase(SCOREIF)) {
-				query = new IndriScoreIfQuery(clauses);
-			} else if (operatorQuery.getOperator().equalsIgnoreCase(SYNONYM)) {
-				query = new IndriSynonymQuery(clauses, operatorQuery.getField());
-			} else {
-				query = new IndriAndQuery(clauses);
+				// Create Operator
+				if (operatorQuery.getOperator().equalsIgnoreCase(OR)) {
+					query = new IndriOrQuery(clauses);
+				} else if (operatorQuery.getOperator().equalsIgnoreCase(WSUM)) {
+					query = new IndriWeightedSumQuery(clauses);
+				} else if (operatorQuery.getOperator().equalsIgnoreCase(MAX)) {
+					query = new IndriMaxQuery(clauses);
+				} else if (operatorQuery.getOperator().equalsIgnoreCase(WAND)) {
+					query = new IndriAndQuery(clauses);
+				} else if (operatorQuery.getOperator().equalsIgnoreCase(NEAR)) {
+					if (clauses.size() > 1) {
+						query = new IndriNearQuery(clauses, operatorQuery.getField(), operatorQuery.getDistance());
+					}
+				} else if (operatorQuery.getOperator().equalsIgnoreCase(WINDOW)) {
+					if (clauses.size() > 1) {
+						query = new IndriWindowQuery(clauses, operatorQuery.getField(), operatorQuery.getDistance());
+					}
+				} else if (operatorQuery.getOperator().equalsIgnoreCase(BAND)) {
+					query = new IndriBandQuery(clauses, operatorQuery.getField());
+				} else if (operatorQuery.getOperator().equalsIgnoreCase(SCOREIFNOT)) {
+					query = new IndriScoreIfNotQuery(clauses);
+				} else if (operatorQuery.getOperator().equalsIgnoreCase(SCOREIF)) {
+					query = new IndriScoreIfQuery(clauses);
+				} else if (operatorQuery.getOperator().equalsIgnoreCase(SYNONYM)) {
+					query = new IndriSynonymQuery(clauses, operatorQuery.getField());
+				} else {
+					query = new IndriAndQuery(clauses);
+				}
 			}
 		} else if (queryTree instanceof QueryParserTermQuery) {
 			// Create term query
@@ -393,10 +426,13 @@ public class IndriQueryParser {
 			}
 			query = new IndriTermQueryWrapper(new Term(field, termQuery.getTerm()));
 		}
-		if (queryTree.getBoost() != null) {
+		if (queryTree.getBoost() != null && query != null) {
 			query = new BoostQuery(query, queryTree.getBoost().floatValue());
 		}
-		BooleanClause clause = new BooleanClause(query, queryTree.getOccur());
+		BooleanClause clause = null;
+		if (query != null) {
+			clause = new BooleanClause(query, queryTree.getOccur());
+		}
 		return clause;
 	}
 

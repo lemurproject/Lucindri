@@ -100,22 +100,24 @@ public class IndriSearch {
 			searcher.setSimilarity(similarity);
 
 			for (JsonIndriQuery query : queryWrapper.getQueries()) {
-				IndriQueryParser queryParser = new IndriQueryParser();
+				IndriQueryParser queryParser = new IndriQueryParser(reader);
 				Query test = queryParser.parseQuery(query.getText());
 
-				TopDocs hitDocs = searcher.search(test, queryWrapper.getCount());
-				ScoreDoc[] scoreDocs = hitDocs.scoreDocs;
+				if (test != null) {
+					TopDocs hitDocs = searcher.search(test, queryWrapper.getCount());
+					ScoreDoc[] scoreDocs = hitDocs.scoreDocs;
 
-				int rank = 0;
-				for (ScoreDoc scoreDoc : scoreDocs) {
-					rank++;
-					int docid = scoreDoc.doc;
+					int rank = 0;
+					for (ScoreDoc scoreDoc : scoreDocs) {
+						rank++;
+						int docid = scoreDoc.doc;
 
-					Document doc = searcher.doc(docid);
-					String fileName = doc.get(EXTERNALID_FIELD);
+						Document doc = searcher.doc(docid);
+						String fileName = doc.get(EXTERNALID_FIELD);
 
-					System.out.println(String.join(" ", query.getNumber(), "Q0", fileName, String.valueOf(rank),
-							String.valueOf(scoreDoc.score), "lucene"));
+						System.out.println(String.join(" ", query.getNumber(), "Q0", fileName, String.valueOf(rank),
+								String.valueOf(scoreDoc.score), "lucene"));
+					}
 				}
 			}
 		} else {
