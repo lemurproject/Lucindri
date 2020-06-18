@@ -1,6 +1,6 @@
 /*
  * ===============================================================================================
- * Copyright (c) 2019 Carnegie Mellon University and University of Massachusetts. All Rights
+ * Copyright (c) 2020 Carnegie Mellon University and University of Massachusetts. All Rights
  * Reserved.
  *
  * Use of the Lemur Toolkit for Language Modeling and Information Retrieval is subject to the terms
@@ -30,12 +30,9 @@ import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.IndriIndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
-import org.apache.lucene.search.similarities.IndriDirichletSimilarity;
-import org.apache.lucene.search.similarities.IndriJelinekMercerSimilarity;
 import org.apache.lucene.search.similarities.Similarity;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
@@ -43,6 +40,8 @@ import org.lemurproject.lucindri.analyzer.EnglishAnalyzerConfigurable;
 import org.lemurproject.lucindri.searcher.domain.JsonIndriQuery;
 import org.lemurproject.lucindri.searcher.domain.JsonIndriQueryWrapper;
 import org.lemurproject.lucindri.searcher.parser.IndriQueryParser;
+import org.lemurproject.lucindri.searcher.similarities.IndriDirichletSimilarity;
+import org.lemurproject.lucindri.searcher.similarities.IndriJelinekMercerSimilarity;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
@@ -100,7 +99,7 @@ public class IndriSearch {
 			searcher.setSimilarity(similarity);
 
 			for (JsonIndriQuery query : queryWrapper.getQueries()) {
-				IndriQueryParser queryParser = new IndriQueryParser(reader);
+				IndriQueryParser queryParser = new IndriQueryParser();
 				Query test = queryParser.parseQuery(query.getText());
 
 				if (test != null) {

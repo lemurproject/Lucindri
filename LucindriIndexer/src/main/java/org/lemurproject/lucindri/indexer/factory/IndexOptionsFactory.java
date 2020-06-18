@@ -49,6 +49,8 @@ public class IndexOptionsFactory {
 		options.setStemmer(properties.getProperty("stemmer"));
 		options.setRemoveStopwords(Boolean.valueOf(properties.getProperty("removeStopwords")));
 		options.setIgnoreCase(Boolean.valueOf(properties.getProperty("ignoreCase")));
+		options.setHost(properties.getProperty("host"));
+		options.setPort(properties.getProperty("port"));
 		return options;
 	}
 

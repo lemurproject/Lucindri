@@ -1,6 +1,6 @@
 /*
  * ===============================================================================================
- * Copyright (c) 2019 Carnegie Mellon University and University of Massachusetts. All Rights
+ * Copyright (c) 2020 Carnegie Mellon University and University of Massachusetts. All Rights
  * Reserved.
  *
  * Use of the Lemur Toolkit for Language Modeling and Information Retrieval is subject to the terms
@@ -26,17 +26,16 @@ import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanClause.Occur;
 import org.apache.lucene.search.BoostQuery;
-import org.apache.lucene.search.IndriTermQueryWrapper;
 import org.apache.lucene.search.Query;
 import org.lemurproject.lucindri.analyzer.EnglishAnalyzerConfigurable;
 import org.lemurproject.lucindri.searcher.IndriAndQuery;
 import org.lemurproject.lucindri.searcher.IndriBandQuery;
 import org.lemurproject.lucindri.searcher.IndriMaxQuery;
 import org.lemurproject.lucindri.searcher.IndriNearQuery;
+import org.lemurproject.lucindri.searcher.IndriNotQuery;
 import org.lemurproject.lucindri.searcher.IndriOrQuery;
-import org.lemurproject.lucindri.searcher.IndriScoreIfNotQuery;
-import org.lemurproject.lucindri.searcher.IndriScoreIfQuery;
 import org.lemurproject.lucindri.searcher.IndriSynonymQuery;
+import org.lemurproject.lucindri.searcher.IndriTermQuery;
 import org.lemurproject.lucindri.searcher.IndriWeightedSumQuery;
 import org.lemurproject.lucindri.searcher.IndriWindowQuery;
 import org.lemurproject.lucindri.searcher.domain.QueryParserOperatorQuery;
@@ -59,14 +58,22 @@ public class IndriQueryParser {
 	private final static String SCOREIF = "scoreif";
 	private final static String SCOREIFNOT = "scoreifnot";
 	private final static String SYNONYM = "syn";
+	private final static String NOT = "not";
 	private final static String DEFAULT_FIELD_NAME = "fulltext";
 
 	private final Analyzer analyzer;
 	private String defaultField;
 
-	public IndriQueryParser(IndexReader reader) throws IOException {
+	public IndriQueryParser() throws IOException {
 		analyzer = getConfigurableAnalyzer();
-		defaultField = getDefaultField(reader);
+		// defaultField = getDefaultField(reader);
+		defaultField = "fulltext";
+	}
+
+	public IndriQueryParser(String field) throws IOException {
+		analyzer = getConfigurableAnalyzer();
+		// defaultField = getDefaultField(reader);
+		defaultField = field;
 	}
 
 	private String getDefaultField(IndexReader reader) throws IOException {
@@ -141,6 +148,7 @@ public class IndriQueryParser {
 		int operatorDistance = 0;
 		String operatorNameLowerCase = (new String(operatorName)).toLowerCase();
 		operatorNameLowerCase = operatorNameLowerCase.replace("#", "");
+		operatorNameLowerCase = operatorNameLowerCase.replace("~", "");
 
 		// Translate indri syntax for near and unordered window
 		if (operatorNameLowerCase.matches("\\d+")) {
@@ -340,7 +348,7 @@ public class IndriQueryParser {
 			}
 
 			// Now handle the argument (which could be a subquery).
-			if (queryString.charAt(0) == '#') { // Subquery
+			if (queryString.charAt(0) == '#' || queryString.charAt(0) == '~') { // Subquery
 				queryString = popSubquery(queryString, queryTree, weight, occur).trim();
 				occur = Occur.SHOULD;
 			} else { // Term
@@ -406,12 +414,10 @@ public class IndriQueryParser {
 					}
 				} else if (operatorQuery.getOperator().equalsIgnoreCase(BAND)) {
 					query = new IndriBandQuery(clauses, operatorQuery.getField());
-				} else if (operatorQuery.getOperator().equalsIgnoreCase(SCOREIFNOT)) {
-					query = new IndriScoreIfNotQuery(clauses);
-				} else if (operatorQuery.getOperator().equalsIgnoreCase(SCOREIF)) {
-					query = new IndriScoreIfQuery(clauses);
 				} else if (operatorQuery.getOperator().equalsIgnoreCase(SYNONYM)) {
 					query = new IndriSynonymQuery(clauses, operatorQuery.getField());
+				} else if (operatorQuery.getOperator().equalsIgnoreCase(NOT)) {
+					query = new IndriNotQuery(clauses);
 				} else {
 					query = new IndriAndQuery(clauses);
 				}
@@ -424,7 +430,7 @@ public class IndriQueryParser {
 			if (termQuery.getField() != null) {
 				field = termQuery.getField();
 			}
-			query = new IndriTermQueryWrapper(new Term(field, termQuery.getTerm()));
+			query = new IndriTermQuery(new Term(field, termQuery.getTerm()));
 		}
 		if (queryTree.getBoost() != null && query != null) {
 			query = new BoostQuery(query, queryTree.getBoost().floatValue());

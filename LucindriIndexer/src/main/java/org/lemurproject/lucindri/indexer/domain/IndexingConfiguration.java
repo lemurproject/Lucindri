@@ -23,6 +23,10 @@ public class IndexingConfiguration extends BaseObject implements Serializable {
 	// Defines the type of parser
 	private String documentFormat;
 
+	// Solr Options
+	private String host;
+	private String port;
+
 	public String getDataDirectory() {
 		return dataDirectory;
 	}
@@ -93,6 +97,22 @@ public class IndexingConfiguration extends BaseObject implements Serializable {
 
 	public void setIndexFields(List<String> indexFields) {
 		this.indexFields = indexFields;
+	}
+
+	public String getHost() {
+		return host;
+	}
+
+	public void setHost(String host) {
+		this.host = host;
+	}
+
+	public String getPort() {
+		return port;
+	}
+
+	public void setPort(String port) {
+		this.port = port;
 	}
 
 }

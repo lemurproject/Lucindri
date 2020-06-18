@@ -30,12 +30,15 @@ import org.xml.sax.SAXException;
 
 public class ClueWeb09DocumentParser extends DocumentParser {
 
-	private final static String EXTERNALID_FIELD = "externalId";
+	private final static String EXTERNALID_FIELD = "id";
 	private final static String ID_FIELD = "internalId";
 	private final static String BODY_FIELD = "body";
 	private final static String TITLE_FIELD = "title";
 	private final static String HEADING_FIELD = "heading";
 	private final static String URL_FIELD = "url";
+	private final static String URL_DEPTH_FIELD = "urldepth";
+	private final static String URL_WIKIPEDIA_FIELD = "wikipedia";
+	private final static String HTML = "html";
 
 	private static final byte MASK_THREE_BYTE_CHAR = (byte) (0xE0);
 	private static final byte MASK_TWO_BYTE_CHAR = (byte) (0xC0);
@@ -62,6 +65,8 @@ public class ClueWeb09DocumentParser extends DocumentParser {
 	ParsedDocumentField titleField;
 	ParsedDocumentField headingField;
 	ParsedDocumentField urlField;
+	ParsedDocumentField urlDepthField;
+	ParsedDocumentField urlWikipediaField;
 	ParsedDocumentField fullTextField;
 
 	public ClueWeb09DocumentParser(IndexingConfiguration options) throws IOException {
@@ -73,6 +78,9 @@ public class ClueWeb09DocumentParser extends DocumentParser {
 		analyzer = analyzerFactory.getConfigurableAnalyzer(options);
 		docNum = 0;
 		fieldsToIndex = options.getIndexFields();
+		if (fieldsToIndex == null) {
+			fieldsToIndex = new ArrayList<String>();
+		}
 		indexFullText = options.isIndexFullText();
 	}
 
@@ -278,7 +286,7 @@ public class ClueWeb09DocumentParser extends DocumentParser {
 			StringBuilder recordHeader = new StringBuilder();
 			byte[] recordContent = null;
 			try {
-				recordContent = readNextRecord(stream, recordHeader, "WARC/1.0");
+				recordContent = readNextRecord(stream, recordHeader, "WARC/0.18");
 			} catch (Exception e) {
 				System.out.println("ClueWebParser docNum: " + docNum);
 				stream = null;
@@ -363,6 +371,18 @@ public class ClueWeb09DocumentParser extends DocumentParser {
 					if (fieldsToIndex.contains(URL_FIELD)) {
 						urlField = new ParsedDocumentField(URL_FIELD, url, false);
 						doc.getDocumentFields().add(urlField);
+
+						double urlDepth = url.chars().filter(ch -> ch == '/').count() - 2;
+						urlDepthField = new ParsedDocumentField(URL_DEPTH_FIELD, String.valueOf(urlDepth), true);
+						doc.getDocumentFields().add(urlDepthField);
+
+						String isWikipedia = String.valueOf(0.0);
+						if (url.contains("wikipedia.org")) {
+							isWikipedia = String.valueOf(1.0);
+						}
+						urlWikipediaField = new ParsedDocumentField(URL_WIKIPEDIA_FIELD, isWikipedia, true);
+						doc.getDocumentFields().add(urlWikipediaField);
+
 					}
 
 					// Index fullText (catch-all) field

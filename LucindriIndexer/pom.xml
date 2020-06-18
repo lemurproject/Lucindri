@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.lemurproject.lucindri</groupId>
 	<artifactId>LucindriIndexer</artifactId>
-	<version>1.0</version>
+	<version>1.1</version>
 	<dependencies>
 		<dependency>
 			<groupId>org.apache.lucene</groupId>
@@ -49,12 +49,12 @@
 		<dependency>
 			<groupId>org.lemurproject.lucindri</groupId>
 			<artifactId>analyzer</artifactId>
-			<version>1.0</version>
+			<version>1.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.lemurproject.lucindri</groupId>
-			<artifactId>searcher</artifactId>
-			<version>1.0</version>
+			<artifactId>LucindriSearcher</artifactId>
+			<version>1.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jsoup</groupId>

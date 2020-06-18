@@ -1,6 +1,6 @@
 /*
  * ===============================================================================================
- * Copyright (c) 2019 Carnegie Mellon University and University of Massachusetts. All Rights
+ * Copyright (c) 2020 Carnegie Mellon University and University of Massachusetts. All Rights
  * Reserved.
  *
  * Use of the Lemur Toolkit for Language Modeling and Information Retrieval is subject to the terms

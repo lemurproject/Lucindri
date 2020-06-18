@@ -27,7 +27,6 @@ import org.apache.lucene.document.NumericDocValuesField;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.IndexWriterConfig.OpenMode;
-import org.apache.lucene.search.similarities.IndriDirichletSimilarity;
 import org.apache.lucene.search.similarities.Similarity;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
@@ -35,6 +34,7 @@ import org.lemurproject.lucindri.indexer.domain.IndexingConfiguration;
 import org.lemurproject.lucindri.indexer.domain.ParsedDocument;
 import org.lemurproject.lucindri.indexer.domain.ParsedDocumentField;
 import org.lemurproject.lucindri.indexer.factory.ConfigurableAnalyzerFactory;
+import org.lemurproject.lucindri.searcher.similarities.IndriDirichletSimilarity;
 
 public class LuceneDocumentWriter implements DocumentWriter {
 

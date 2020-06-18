@@ -1,6 +1,6 @@
 /*
  * ===============================================================================================
- * Copyright (c) 2019 Carnegie Mellon University and University of Massachusetts. All Rights
+ * Copyright (c) 2020 Carnegie Mellon University and University of Massachusetts. All Rights
  * Reserved.
  *
  * Use of the Lemur Toolkit for Language Modeling and Information Retrieval is subject to the terms
@@ -16,7 +16,6 @@ import java.util.List;
 
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.IndriWindowWeight;
 import org.apache.lucene.search.ScoreMode;
 import org.apache.lucene.search.Weight;
 
