@@ -6,7 +6,7 @@ import java.lang.reflect.InvocationTargetException;
 import org.lemurproject.lucindri.indexer.domain.IndexingConfiguration;
 import org.lemurproject.lucindri.indexer.factory.IndexOptionsFactory;
 import org.lemurproject.lucindri.indexer.service.IndexService;
-import org.lemurproject.lucindri.indexer.service.LuceneIndexServiceImpl;
+import org.lemurproject.lucindri.indexer.service.IndexServiceImpl;
 import org.xml.sax.SAXException;
 
 public class BuildIndex {
@@ -24,7 +24,7 @@ public class BuildIndex {
 					"Either indexFullText must be true or indexFields must be defined (or both)");
 		}
 
-		IndexService indexService = new LuceneIndexServiceImpl();
+		IndexService indexService = new IndexServiceImpl();
 		indexService.buildIndex(indexingConfig);
 
 	}

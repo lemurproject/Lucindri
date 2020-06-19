@@ -22,10 +22,21 @@ public class IndexingConfiguration extends BaseObject implements Serializable {
 
 	// Defines the type of parser
 	private String documentFormat;
+	
+	// Defines whether to index in Lucene or Solr
+	private String indexPlatform;
 
 	// Solr Options
 	private String host;
 	private String port;
+	
+	public String getIndexPlatform() {
+		return indexPlatform;
+	}
+
+	public void setIndexPlatform(String indexPlatform) {
+		this.indexPlatform = indexPlatform;
+	}
 
 	public String getDataDirectory() {
 		return dataDirectory;

@@ -24,14 +24,15 @@ import java.util.logging.Logger;
 import org.lemurproject.lucindri.indexer.documentparser.DocumentParser;
 import org.lemurproject.lucindri.indexer.documentwriter.DocumentWriter;
 import org.lemurproject.lucindri.indexer.documentwriter.LuceneDocumentWriter;
+import org.lemurproject.lucindri.indexer.documentwriter.SolrDocumentWriter;
 import org.lemurproject.lucindri.indexer.domain.IndexingConfiguration;
 import org.lemurproject.lucindri.indexer.domain.ParsedDocument;
 import org.lemurproject.lucindri.indexer.factory.DocumentParserFactory;
 import org.xml.sax.SAXException;
 
-public class LuceneIndexServiceImpl implements IndexService {
+public class IndexServiceImpl implements IndexService {
 
-	private static final Logger logger = Logger.getLogger(LuceneIndexServiceImpl.class.getName());
+	private static final Logger logger = Logger.getLogger(IndexServiceImpl.class.getName());
 
 	@Override
 	public void buildIndex(IndexingConfiguration indexingConfig) throws IOException, InstantiationException,
@@ -44,13 +45,16 @@ public class LuceneIndexServiceImpl implements IndexService {
 		DocumentParser docParser = docParserFactory.getDocumentParser(indexingConfig);
 
 		List<DocumentWriter> docWriters = new ArrayList<>();
-		// TODO: Implement all documentWriters based on options
+		
 		DocumentWriter docWriter = new LuceneDocumentWriter(indexingConfig);
+		if (indexingConfig.getIndexPlatform() != null && indexingConfig.getIndexPlatform().equalsIgnoreCase("solr")) {
+			docWriter = new SolrDocumentWriter(indexingConfig);
+		} else {
+			String indexDirPath = Paths.get(indexingConfig.getIndexDirectory(), indexingConfig.getIndexName()).toString();
+			File rootDir = new File(indexDirPath);
+			rootDir.mkdir();
+		}
 		docWriters.add(docWriter);
-
-		String indexDirPath = Paths.get(indexingConfig.getIndexDirectory(), indexingConfig.getIndexName()).toString();
-		File rootDir = new File(indexDirPath);
-		rootDir.mkdir();
 
 		// Parse documents and add annotations
 		System.out.println("Indexing started...");

@@ -33,6 +33,7 @@ public class IndexOptionsFactory {
 	public IndexingConfiguration getIndexOptions(String propertiesFileName) throws IOException {
 		Properties properties = readPropertiesFromFile(propertiesFileName);
 		IndexingConfiguration options = new IndexingConfiguration();
+		options.setIndexPlatform(properties.getProperty("indexingPlatform"));
 		options.setDocumentFormat(properties.getProperty("documentFormat"));
 		options.setDataDirectory(properties.getProperty("dataDirectory"));
 		options.setIndexDirectory(properties.getProperty("indexDirectory"));
