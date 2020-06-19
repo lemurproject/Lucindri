@@ -21,11 +21,15 @@ Next, clone this repository and build using *mvn clean install* in this order:
 ## Lucindri Indexer
 The main class in indexer is: org.lemurproject.lucindri.indexer.BuildIndex.  This program takes a single properties file as an argument.  See index.properties in the indexer directory as an example.
 
+As of release 1.1, Lucindri supports indexing in Solr.
+
 Description of indexing properties:
 ```
 #implementation options
 # documentFormat options = text, wsj, gov2, json, wapo, warc, trectext, cw09, cw12, car, marco
 documentFormat=[text | wsj | gov2 | json | wapo | warc | trectext | cw09 | cw12 | car | marco]
+# indexing platform options = lucene, solr
+indexingPlatform=[lucene|solr]
 
 #data options
 dataDirectory=[Directory or file where data is] 
@@ -42,6 +46,10 @@ fieldNames=[Comma separated list of field names to be stored (e.g. title, url, b
 stemmer=[kstem | porter | none]
 removeStopwords=[true | false]
 ignoreCase=[true | false]
+
+#solr options
+host=[host name or IP]
+port=[port number]
 ```
 
 Example index.properties:
