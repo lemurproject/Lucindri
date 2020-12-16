@@ -1,14 +1,3 @@
-/*
- * ===============================================================================================
- * Copyright (c) 2020 Carnegie Mellon University and University of Massachusetts. All Rights
- * Reserved.
- *
- * Use of the Lemur Toolkit for Language Modeling and Information Retrieval is subject to the terms
- * of the software license set forth in the LICENSE file included with this software, and also
- * available at http://www.lemurproject.org/license.html
- *
- * ================================================================================================
- */
 package org.lemurproject.lucindri.searcher;
 
 import java.io.IOException;
@@ -22,33 +11,21 @@ import org.apache.lucene.search.ScoreMode;
 import org.apache.lucene.search.Scorer;
 import org.apache.lucene.search.Weight;
 
-abstract public class IndriDisjunctionScorer extends Scorer implements WeightedScorer {
+abstract public class IndriDisjunctionScorer extends IndriScorer {
 
-	private float boost;
-	private DisiWrapper subAvgScorers;
+	private final List<Scorer> subScorersList;
 	private final DisiPriorityQueue subScorers;
 	private final DocIdSetIterator approximation;
 
-	protected IndriDisjunctionScorer(Weight weight, List<Scorer> subScorers, ScoreMode scoreMode, float boost) {
-		super(weight);
-		this.boost = boost;
-		this.subScorers = new DisiPriorityQueue(subScorers.size());
-		for (Scorer scorer : subScorers) {
+	protected IndriDisjunctionScorer(Weight weight, List<Scorer> subScorersList, ScoreMode scoreMode, float boost) {
+		super(weight, boost);
+		this.subScorersList = subScorersList;
+		this.subScorers = new DisiPriorityQueue(subScorersList.size());
+		for (Scorer scorer : subScorersList) {
 			final DisiWrapper w = new DisiWrapper(scorer);
 			this.subScorers.add(w);
 		}
 		this.approximation = new DisjunctionDISIApproximation(this.subScorers);
-		this.subAvgScorers = null;
-		DisiWrapper prevWrapper = null;
-		for (Scorer scorer : subScorers) {
-			final DisiWrapper w = new DisiWrapper(scorer);
-			if (subAvgScorers == null) {
-				subAvgScorers = w;
-			} else {
-				prevWrapper.next = w;
-			}
-			prevWrapper = w;
-		}
 	}
 
 	@Override
@@ -61,11 +38,13 @@ abstract public class IndriDisjunctionScorer extends Scorer implements WeightedS
 		return 0;
 	}
 
-	DisiWrapper getSubMatches() throws IOException {
-		return subAvgScorers;
+	public List<Scorer> getSubMatches() throws IOException {
+		return subScorersList;
 	}
 
-	abstract float score(DisiWrapper topList) throws IOException;
+	abstract float score(List<Scorer> subScorers) throws IOException;
+
+	abstract public float smoothingScore(List<Scorer> subScorers, int docId) throws IOException;
 
 	@Override
 	public float score() throws IOException {
@@ -73,13 +52,13 @@ abstract public class IndriDisjunctionScorer extends Scorer implements WeightedS
 	}
 
 	@Override
-	public int docID() {
-		return subScorers.top().doc;
+	public float smoothingScore(int docId) throws IOException {
+		return smoothingScore(getSubMatches(), docId);
 	}
 
 	@Override
-	public float getBoost() {
-		return this.boost;
+	public int docID() {
+		return subScorers.top().doc;
 	}
 
 }

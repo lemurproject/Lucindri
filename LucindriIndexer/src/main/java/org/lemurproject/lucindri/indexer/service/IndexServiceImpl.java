@@ -23,7 +23,6 @@ import java.util.logging.Logger;
 
 import org.lemurproject.lucindri.indexer.documentparser.DocumentParser;
 import org.lemurproject.lucindri.indexer.documentwriter.DocumentWriter;
-import org.lemurproject.lucindri.indexer.documentwriter.LuceneDocumentWriter;
 import org.lemurproject.lucindri.indexer.documentwriter.SolrDocumentWriter;
 import org.lemurproject.lucindri.indexer.domain.IndexingConfiguration;
 import org.lemurproject.lucindri.indexer.domain.ParsedDocument;
@@ -46,7 +45,7 @@ public class IndexServiceImpl implements IndexService {
 
 		List<DocumentWriter> docWriters = new ArrayList<>();
 		
-		DocumentWriter docWriter = new LuceneDocumentWriter(indexingConfig);
+		DocumentWriter docWriter = new SolrDocumentWriter(indexingConfig);
 		if (indexingConfig.getIndexPlatform() != null && indexingConfig.getIndexPlatform().equalsIgnoreCase("solr")) {
 			docWriter = new SolrDocumentWriter(indexingConfig);
 		} else {

@@ -35,7 +35,6 @@ public class IndriQParser extends QParser {
 			parser = new IndriQueryParser("fulltext_lucindri");
 			query = parser.parseQuery(qstr);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 

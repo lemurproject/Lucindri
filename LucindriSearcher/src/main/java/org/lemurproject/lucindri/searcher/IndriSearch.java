@@ -28,7 +28,7 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.queryparser.classic.ParseException;
+import org.apache.lucene.index.MultiReader;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
@@ -52,7 +52,7 @@ public class IndriSearch {
 	private final static String EXTERNALID_FIELD = "externalId";
 
 	public static void main(String[] args)
-			throws IOException, ParseException, ParserConfigurationException, SAXException {
+			throws Exception {
 		if (args.length != 1) {
 			System.out.println("Specify parameter file");
 			System.exit(0);
@@ -69,9 +69,27 @@ public class IndriSearch {
 		if (queryWrapper != null) {
 			String indexDir = queryWrapper.getIndex();
 
-			Directory dir = FSDirectory.open(Paths.get(indexDir));
-			IndexReader reader = DirectoryReader.open(dir);
-			IndexSearcher searcher = new IndriIndexSearcher(reader);
+			IndexReader reader = null;
+			IndexSearcher searcher = null;
+			if (indexDir.contains(",")) {
+				String[] dirs = indexDir.split(",");
+				IndexReader[] subReaders = new IndexReader[dirs.length];
+				int readerIndex = 0;
+				for (String dirString : dirs) {
+					Directory dir = FSDirectory.open(Paths.get(dirString.trim()));
+					IndexReader subReader = DirectoryReader.open(dir);
+					subReaders[readerIndex] = subReader;
+					readerIndex++;
+				}
+				reader = new MultiReader(subReaders, true);
+			} else {
+				Directory dir = FSDirectory.open(Paths.get(indexDir));
+				reader = DirectoryReader.open(dir);
+			}
+			searcher = new IndriIndexSearcher(reader);
+			if (reader == null || searcher == null) {
+				throw new Exception("Index Directory was not properly set");
+			}
 
 			Similarity similarity = new IndriDirichletSimilarity();
 			if (queryWrapper.getRule() != null) {

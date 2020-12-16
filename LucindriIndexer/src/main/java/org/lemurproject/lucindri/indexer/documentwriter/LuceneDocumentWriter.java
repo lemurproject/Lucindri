@@ -27,6 +27,7 @@ import org.apache.lucene.document.NumericDocValuesField;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.IndexWriterConfig.OpenMode;
+import org.apache.lucene.search.similarities.LMDirichletSimilarity;
 import org.apache.lucene.search.similarities.Similarity;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
@@ -34,7 +35,6 @@ import org.lemurproject.lucindri.indexer.domain.IndexingConfiguration;
 import org.lemurproject.lucindri.indexer.domain.ParsedDocument;
 import org.lemurproject.lucindri.indexer.domain.ParsedDocumentField;
 import org.lemurproject.lucindri.indexer.factory.ConfigurableAnalyzerFactory;
-import org.lemurproject.lucindri.searcher.similarities.IndriDirichletSimilarity;
 
 public class LuceneDocumentWriter implements DocumentWriter {
 
@@ -53,7 +53,7 @@ public class LuceneDocumentWriter implements DocumentWriter {
 			throws IOException, ClassCastException, ClassNotFoundException {
 		ConfigurableAnalyzerFactory analyzerFactory = new ConfigurableAnalyzerFactory();
 		analyzer = analyzerFactory.getConfigurableAnalyzer(options);
-		this.similarity = new IndriDirichletSimilarity();
+		this.similarity = new LMDirichletSimilarity();
 
 		String indexDirectory = Paths.get(options.getIndexDirectory(), options.getIndexName()).toString();
 		iWriter = createIndexWriter(indexDirectory, analyzer);

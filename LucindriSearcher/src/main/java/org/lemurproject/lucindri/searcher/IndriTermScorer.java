@@ -16,14 +16,12 @@ import java.io.IOException;
 import org.apache.lucene.index.ImpactsEnum;
 import org.apache.lucene.index.PostingsEnum;
 import org.apache.lucene.index.SlowImpactsEnum;
-import org.apache.lucene.search.DisiWrapper;
 import org.apache.lucene.search.DocIdSetIterator;
 import org.apache.lucene.search.ImpactsDISI;
 import org.apache.lucene.search.LeafSimScorer;
-import org.apache.lucene.search.Scorer;
 import org.apache.lucene.search.Weight;
 
-public class IndriTermScorer extends Scorer implements SmoothingScorer, WeightedScorer {
+public class IndriTermScorer extends IndriScorer {
 
 	private final PostingsEnum postingsEnum;
 	private final ImpactsEnum impactsEnum;
@@ -33,7 +31,7 @@ public class IndriTermScorer extends Scorer implements SmoothingScorer, Weighted
 	private final float boost;
 
 	public IndriTermScorer(Weight weight, PostingsEnum postingsEnum, LeafSimScorer docScorer, float boost) {
-		super(weight);
+		super(weight, boost);
 		this.docScorer = docScorer;
 		this.boost = boost;
 		iterator = this.postingsEnum = postingsEnum;
@@ -42,7 +40,7 @@ public class IndriTermScorer extends Scorer implements SmoothingScorer, Weighted
 	}
 
 	@Override
-	public float smoothingScore(DisiWrapper topList, int docId) throws IOException {
+	public float smoothingScore(int docId) throws IOException {
 		return docScorer.score(docId, 0);
 	}
 
@@ -69,7 +67,6 @@ public class IndriTermScorer extends Scorer implements SmoothingScorer, Weighted
 
 	@Override
 	public float getMaxScore(int upTo) throws IOException {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 

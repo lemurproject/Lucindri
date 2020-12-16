@@ -4,37 +4,37 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.lemurproject.lucindri</groupId>
 	<artifactId>LucindriSearcher</artifactId>
-	<version>1.1</version>
+	<version>1.2</version>
 	<dependencies>
 		<dependency>
 			<groupId>org.apache.lucene</groupId>
 			<artifactId>lucene-core</artifactId>
-			<version>8.1.0</version>
+			<version>8.7.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.lucene</groupId>
 			<artifactId>lucene-analyzers-common</artifactId>
-			<version>8.1.0</version>
+			<version>8.7.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.lucene</groupId>
 			<artifactId>lucene-backward-codecs</artifactId>
-			<version>8.1.0</version>
+			<version>8.7.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.lucene</groupId>
 			<artifactId>lucene-benchmark</artifactId>
-			<version>8.1.0</version>
+			<version>8.7.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.lucene</groupId>
 			<artifactId>lucene-codecs</artifactId>
-			<version>8.1.0</version>
+			<version>8.7.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.lucene</groupId>
 			<artifactId>lucene-queryparser</artifactId>
-			<version>8.1.0</version>
+			<version>8.7.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
@@ -44,7 +44,7 @@
 		<dependency>
 			<groupId>org.lemurproject.lucindri</groupId>
 			<artifactId>analyzer</artifactId>
-			<version>1.1</version>
+			<version>1.2</version>
 		</dependency>
 		<dependency>
 			<groupId>com.google.code.gson</groupId>
@@ -54,12 +54,12 @@
 		<dependency>
 			<groupId>org.apache.solr</groupId>
 			<artifactId>solr-solrj</artifactId>
-			<version>8.1.0</version>
+			<version>8.7.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.solr</groupId>
 			<artifactId>solr-core</artifactId>
-			<version>8.1.0</version>
+			<version>8.7.0</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>jdk.tools</artifactId>

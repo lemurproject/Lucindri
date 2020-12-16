@@ -12,7 +12,7 @@ public abstract class DocumentParser {
 
 	public final static String FULLTEXT_FIELD = "fulltext";
 	public final static String FULLTEXT_LENGTH_FIELD = "fulltextlength";
-	public final static String EXTERNALID_FIELD = "externalId";
+	public final static String EXTERNALID_FIELD = "id";
 	public final static String INTERNALID_FIELD = "internalId";
 	public final static String TITLE_FIELD = "title";
 	public final static String URL_FIELD = "url";

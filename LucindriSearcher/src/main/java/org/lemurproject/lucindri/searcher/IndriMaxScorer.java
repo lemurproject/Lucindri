@@ -16,51 +16,43 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.lucene.search.DisiWrapper;
 import org.apache.lucene.search.ScoreMode;
 import org.apache.lucene.search.Scorer;
 import org.apache.lucene.search.Weight;
 
-public class IndriMaxScorer extends IndriDisjunctionScorer implements SmoothingScorer {
+public class IndriMaxScorer extends IndriDisjunctionScorer {
 
 	protected IndriMaxScorer(Weight weight, List<Scorer> subScorers, ScoreMode scoreMode, float boost)
 			throws IOException {
 		super(weight, subScorers, scoreMode, boost);
+	}	
+	
+	@Override
+	public float score(List<Scorer> subScorers) throws IOException {
+		int docId = this.docID();
+		return scoreDoc(subScorers, docId);
 	}
 
 	@Override
-	protected float score(DisiWrapper topList) throws IOException {
+	public float smoothingScore(List<Scorer> subScorers, int docId) throws IOException {
+		return scoreDoc(subScorers, docId);
+	}
+
+	private float scoreDoc(List<Scorer> subScorers, int docId) throws IOException {
 		List<Float> scoreArray = new ArrayList<>();
-		for (DisiWrapper w = topList; w != null; w = w.next) {
-			int docId = this.docID();
-			int scorerDocId = w.scorer.docID();
-			if (docId == scorerDocId) {
-				scoreArray.add(w.scorer.score());
-			} else if (w.scorer instanceof SmoothingScorer) {
-				float smoothingScore = ((SmoothingScorer) w.scorer).smoothingScore(w, docId);
-				scoreArray.add(smoothingScore);
+		for (Scorer scorer : subScorers) {
+			if (scorer instanceof IndriScorer) {
+				IndriScorer indriScorer = (IndriScorer) scorer;
+				int scorerDocId = indriScorer.docID();
+				if (docId == scorerDocId) {
+					scoreArray.add(indriScorer.score());
+				} else {
+					scoreArray.add(indriScorer.smoothingScore(docId));
+				}
 			}
 		}
 		float score = Collections.max(scoreArray);
 		return (float) (score);
-	}
-
-	@Override
-	public float smoothingScore(DisiWrapper topList, int docId) throws IOException {
-		DisiWrapper test = getSubMatches();
-		List<Float> scoreArray = new ArrayList<>();
-		for (DisiWrapper w = test; w != null; w = w.next) {
-			int scorerDocId = w.scorer.docID();
-			if (docId == scorerDocId) {
-				scoreArray.add(w.scorer.score());
-			} else if (w.scorer instanceof SmoothingScorer) {
-				float smoothingScore = ((SmoothingScorer) w.scorer).smoothingScore(w, docId);
-				scoreArray.add(smoothingScore);
-			}
-		}
-		float score = Collections.max(scoreArray);
-		return (float) (score);
-
 	}
 
 }

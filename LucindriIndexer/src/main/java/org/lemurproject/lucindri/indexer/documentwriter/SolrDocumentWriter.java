@@ -23,7 +23,6 @@ public class SolrDocumentWriter implements DocumentWriter {
 		String zkHostString = String.join(":", options.getHost(), options.getPort());
 		zkHosts.add(zkHostString);
 		Builder builder = new CloudSolrClient.Builder(zkHosts, java.util.Optional.empty());
-		// builder.withHttpClient(HttpClientUtil.createClient(null));
 		solrClient = builder.build();
 		solrClient.setDefaultCollection(options.getIndexName());
 		docList = new ArrayList<SolrInputDocument>();
@@ -37,11 +36,11 @@ public class SolrDocumentWriter implements DocumentWriter {
 			// Add document to search engine
 			for (ParsedDocumentField docField : parsedDoc.getDocumentFields()) {
 				if (docField.getContent() != null) {
-					if (!docField.isNumeric()) {
+					//if (!docField.isNumeric()) {
 						solrDocument.addField(docField.getFieldName(), docField.getContent());
-					} else {
-						solrDocument.addField(docField.getFieldName(), Long.valueOf(docField.getContent()).longValue());
-					}
+//					} else {
+//						solrDocument.addField(docField.getFieldName(), Long.valueOf(docField.getContent()).longValue());
+//					}
 				}
 			}
 			// iWriter.addDocument(luceneDoc);

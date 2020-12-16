@@ -362,6 +362,10 @@ public class IndriQueryParser {
 
 	public Query parseQuery(String queryString) {
 		// TODO: json or indri query
+		queryString = queryString.replace("'", "");
+		queryString = queryString.replace("\"", "");
+		queryString = queryString.replace("+", " ");
+		queryString = queryString.replace(":", ".");
 		QueryParserQuery qry = parseQueryString(queryString, Occur.SHOULD);
 		return getLuceneQuery(qry);
 	}
