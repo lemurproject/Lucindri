@@ -40,7 +40,7 @@ public class IndriIndexSearcher extends IndexSearcher {
 					continue;
 				}
 				docCount += terms.getDocCount();
-				// sumTotalTermFreq += terms.getSumTotalTermFreq();
+				sumTotalTermFreq += terms.getSumTotalTermFreq();
 				// System.out.println("Number of tokens (lucene): " +
 				// terms.getSumTotalTermFreq());
 				sumDocFreq += terms.getSumDocFreq();
