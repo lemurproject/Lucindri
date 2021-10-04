@@ -17,19 +17,20 @@ import java.util.Collection;
 
 import org.apache.lucene.search.ConjunctionDISI;
 import org.apache.lucene.search.DocIdSetIterator;
+import org.apache.lucene.search.IndriScorer;
 import org.apache.lucene.search.Scorer;
 import org.apache.lucene.search.TwoPhaseIterator;
 import org.apache.lucene.search.Weight;
 
-public class IndriConjunctionScorer extends Scorer {
+public class IndriConjunctionScorer extends IndriScorer {
 
 	final DocIdSetIterator disi;
 	final Scorer[] scorers;
 	final Collection<Scorer> required;
 
-	protected IndriConjunctionScorer(Weight weight, Collection<Scorer> required, Collection<Scorer> scorers)
-			throws IOException {
-		super(weight);
+	protected IndriConjunctionScorer(Weight weight, Collection<Scorer> required, Collection<Scorer> scorers,
+			float boost) throws IOException {
+		super(weight, boost);
 		assert required.containsAll(scorers);
 		this.disi = ConjunctionDISI.intersectScorers(required);
 		this.scorers = scorers.toArray(new Scorer[scorers.size()]);
@@ -99,6 +100,11 @@ public class IndriConjunctionScorer extends Scorer {
 			this.iterator = iterator;
 			this.cost = iterator.cost();
 		}
+	}
+
+	@Override
+	public float smoothingScore(int docId) throws IOException {
+		return 0;
 	}
 
 }

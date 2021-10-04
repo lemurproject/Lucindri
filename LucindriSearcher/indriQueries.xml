@@ -5,6 +5,6 @@
         <count>100</count>
   <query>
     <number> 51 </number>
-    <text>#and(president trump)</text>
+    <text>#10(president trump)</text>
   </query>
 </parameters>

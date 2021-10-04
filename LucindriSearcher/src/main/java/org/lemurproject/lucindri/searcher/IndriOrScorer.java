@@ -24,7 +24,7 @@ public class IndriOrScorer extends IndriDisjunctionScorer {
 			throws IOException {
 		super(weight, subScorers, scoreMode, boost);
 	}
-	
+
 	@Override
 	public float score(List<Scorer> subScorers) throws IOException {
 		int docId = this.docID();
@@ -39,14 +39,11 @@ public class IndriOrScorer extends IndriDisjunctionScorer {
 	private float scoreDoc(List<Scorer> subScorers, int docId) throws IOException {
 		double score = 1;
 		for (Scorer scorer : subScorers) {
-			if (scorer instanceof IndriScorer) {
-				IndriScorer indriScorer = (IndriScorer) scorer;
-				int scorerDocId = indriScorer.docID();
-				if (docId == scorerDocId) {
-					score *= (1 - Math.exp(indriScorer.score()));
-				} else {
-					score *= (1 - Math.exp(indriScorer.smoothingScore(docId)));
-				}
+			int scorerDocId = scorer.docID();
+			if (docId == scorerDocId) {
+				score *= (1 - Math.exp(scorer.score()));
+			} else {
+				score *= (1 - Math.exp(scorer.smoothingScore(docId)));
 			}
 		}
 		return (float) (Math.log(1.0 - score));

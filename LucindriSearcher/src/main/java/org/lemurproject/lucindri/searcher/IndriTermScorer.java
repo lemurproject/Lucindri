@@ -18,6 +18,7 @@ import org.apache.lucene.index.PostingsEnum;
 import org.apache.lucene.index.SlowImpactsEnum;
 import org.apache.lucene.search.DocIdSetIterator;
 import org.apache.lucene.search.ImpactsDISI;
+import org.apache.lucene.search.IndriScorer;
 import org.apache.lucene.search.LeafSimScorer;
 import org.apache.lucene.search.Weight;
 

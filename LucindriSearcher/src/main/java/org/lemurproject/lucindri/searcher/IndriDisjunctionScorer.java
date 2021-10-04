@@ -11,7 +11,7 @@ import org.apache.lucene.search.ScoreMode;
 import org.apache.lucene.search.Scorer;
 import org.apache.lucene.search.Weight;
 
-abstract public class IndriDisjunctionScorer extends IndriScorer {
+abstract public class IndriDisjunctionScorer extends org.apache.lucene.search.IndriScorer {
 
 	private final List<Scorer> subScorersList;
 	private final DisiPriorityQueue subScorers;

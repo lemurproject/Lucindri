@@ -25,8 +25,8 @@ public class IndriMaxScorer extends IndriDisjunctionScorer {
 	protected IndriMaxScorer(Weight weight, List<Scorer> subScorers, ScoreMode scoreMode, float boost)
 			throws IOException {
 		super(weight, subScorers, scoreMode, boost);
-	}	
-	
+	}
+
 	@Override
 	public float score(List<Scorer> subScorers) throws IOException {
 		int docId = this.docID();
@@ -41,14 +41,11 @@ public class IndriMaxScorer extends IndriDisjunctionScorer {
 	private float scoreDoc(List<Scorer> subScorers, int docId) throws IOException {
 		List<Float> scoreArray = new ArrayList<>();
 		for (Scorer scorer : subScorers) {
-			if (scorer instanceof IndriScorer) {
-				IndriScorer indriScorer = (IndriScorer) scorer;
-				int scorerDocId = indriScorer.docID();
-				if (docId == scorerDocId) {
-					scoreArray.add(indriScorer.score());
-				} else {
-					scoreArray.add(indriScorer.smoothingScore(docId));
-				}
+			int scorerDocId = scorer.docID();
+			if (docId == scorerDocId) {
+				scoreArray.add(scorer.score());
+			} else {
+				scoreArray.add(scorer.smoothingScore(docId));
 			}
 		}
 		float score = Collections.max(scoreArray);

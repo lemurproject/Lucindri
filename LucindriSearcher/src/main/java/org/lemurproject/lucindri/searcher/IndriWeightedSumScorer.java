@@ -14,7 +14,7 @@ package org.lemurproject.lucindri.searcher;
 import java.io.IOException;
 import java.util.List;
 
-import org.apache.lucene.search.DisiWrapper;
+import org.apache.lucene.search.IndriScorer;
 import org.apache.lucene.search.ScoreMode;
 import org.apache.lucene.search.Scorer;
 import org.apache.lucene.search.Weight;
@@ -25,7 +25,7 @@ public class IndriWeightedSumScorer extends IndriDisjunctionScorer {
 			throws IOException {
 		super(weight, subScorers, scoreMode, boost);
 	}
-	
+
 	@Override
 	public float score(List<Scorer> subScorers) throws IOException {
 		int docId = this.docID();
@@ -48,8 +48,7 @@ public class IndriWeightedSumScorer extends IndriDisjunctionScorer {
 				if (docId == scorerDocId) {
 					score += indriScorer.getBoost() * Math.exp(indriScorer.score());
 				} else {
-					double smoothingScore = indriScorer.getBoost()
-							* Math.exp(indriScorer.smoothingScore(docId));
+					double smoothingScore = indriScorer.getBoost() * Math.exp(indriScorer.smoothingScore(docId));
 					score += smoothingScore;
 				}
 				subScore *= indriScorer.getBoost();

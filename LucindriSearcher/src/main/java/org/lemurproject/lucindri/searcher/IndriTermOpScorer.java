@@ -13,20 +13,19 @@ package org.lemurproject.lucindri.searcher;
 
 import java.io.IOException;
 
-import org.apache.lucene.search.DisiWrapper;
 import org.apache.lucene.search.DocIdSetIterator;
+import org.apache.lucene.search.IndriScorer;
 import org.apache.lucene.search.LeafSimScorer;
-import org.apache.lucene.search.Scorer;
 import org.apache.lucene.search.Weight;
 
-public class IndriTermOpScorer extends Scorer implements SmoothingScorer, WeightedScorer {
+public class IndriTermOpScorer extends IndriScorer {
 
 	private final IndriTermOpEnum postingsEnum;
 	private final LeafSimScorer docScorer;
 	private final float boost;
 
 	protected IndriTermOpScorer(Weight weight, IndriTermOpEnum postingsEnum, LeafSimScorer docScorer, float boost) {
-		super(weight);
+		super(weight, boost);
 		this.docScorer = docScorer;
 		this.postingsEnum = postingsEnum;
 		this.boost = boost;
@@ -64,15 +63,13 @@ public class IndriTermOpScorer extends Scorer implements SmoothingScorer, Weight
 	}
 
 	@Override
-	public float smoothingScore(DisiWrapper topList, int docId) throws IOException {
-		// TODO Auto-generated method stub
+	public float getMaxScore(int upTo) throws IOException {
 		return 0;
 	}
 
 	@Override
-	public float getMaxScore(int upTo) throws IOException {
-		// TODO Auto-generated method stub
-		return 0;
+	public float smoothingScore(int docId) throws IOException {
+		return docScorer.score(docId, 0);
 	}
 
 }

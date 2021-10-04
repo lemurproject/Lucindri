@@ -13,38 +13,34 @@ package org.lemurproject.lucindri.searcher;
 
 import java.io.IOException;
 
-import org.apache.lucene.search.DisiWrapper;
 import org.apache.lucene.search.DocIdSetIterator;
+import org.apache.lucene.search.IndriScorer;
 import org.apache.lucene.search.Scorer;
 import org.apache.lucene.search.Weight;
 
-public class IndriNotScorer extends Scorer implements WeightedScorer, SmoothingScorer {
+public class IndriNotScorer extends IndriScorer {
 	private Scorer subScorer;
-	private final float boost;
 
 	protected IndriNotScorer(Weight weight, Scorer subScorer, float boost) {
-		super(weight);
+		super(weight, boost);
 		this.subScorer = subScorer;
-		this.boost = boost;
 	}
 
 	@Override
 	public float score() throws IOException {
 		float score = subScorer.score();
-		if (subScorer instanceof WeightedScorer) {
-			score *= ((WeightedScorer) subScorer).getBoost();
+		if (subScorer instanceof IndriScorer) {
+			score *= ((IndriScorer) subScorer).getBoost();
 		}
 		return (float) (Math.log(1.0 - Math.exp(score)));
 	}
 
 	@Override
-	public float smoothingScore(DisiWrapper topList, int docId) throws IOException {
+	public float smoothingScore(int docId) throws IOException {
 		float score = 0.0f;
-		if (subScorer instanceof SmoothingScorer) {
-			score = ((SmoothingScorer) subScorer).smoothingScore(null, docId);
-		}
-		if (subScorer instanceof WeightedScorer) {
-			score *= ((WeightedScorer) subScorer).getBoost();
+		score = subScorer.smoothingScore(docId);
+		if (subScorer instanceof IndriScorer) {
+			score *= ((IndriScorer) subScorer).getBoost();
 		}
 		return (float) (Math.log(1.0 - Math.exp(score)));
 
@@ -62,13 +58,7 @@ public class IndriNotScorer extends Scorer implements WeightedScorer, SmoothingS
 
 	@Override
 	public float getMaxScore(int upTo) throws IOException {
-		// TODO Auto-generated method stub
 		return 0;
-	}
-
-	@Override
-	public float getBoost() {
-		return boost;
 	}
 
 }

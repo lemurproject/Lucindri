@@ -20,12 +20,12 @@ import org.apache.lucene.search.ScoreMode;
 import org.apache.lucene.search.Scorer;
 import org.apache.lucene.search.Weight;
 
-public class IndriBandScorer extends IndriConjunctionScorer implements WeightedScorer {
+public class IndriBandScorer extends IndriConjunctionScorer {
 	private float boost;
 
 	protected IndriBandScorer(Weight weight, List<Scorer> subScorers, ScoreMode scoreMode, float boost)
 			throws IOException {
-		super(weight, subScorers, subScorers);
+		super(weight, subScorers, subScorers, boost);
 	}
 
 	@Override
@@ -44,13 +44,7 @@ public class IndriBandScorer extends IndriConjunctionScorer implements WeightedS
 	}
 
 	@Override
-	public float getBoost() {
-		return this.boost;
-	}
-
-	@Override
 	public float getMaxScore(int upTo) throws IOException {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
