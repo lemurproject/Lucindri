@@ -1,10 +1,10 @@
 <parameters>
-        <index>C:\\dev\\Indexes_Lucene_1.0\\toy_novectors</index>
+        <index>C:\\dev\\Indexes_Lucene_1.0\\unitTestIndex</index>
         <trecFormat>true</trecFormat>
         <rule>dirichlet:2000</rule>
         <count>100</count>
   <query>
     <number> 51 </number>
-    <text>#10(president trump)</text>
+    <text>#wsum(1.0 george 2.0 washington)</text>
   </query>
 </parameters>

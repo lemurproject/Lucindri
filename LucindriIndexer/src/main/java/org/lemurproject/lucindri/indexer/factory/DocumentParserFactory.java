@@ -19,11 +19,13 @@ import java.util.Set;
 import org.lemurproject.lucindri.indexer.documentparser.CARDocumentParser;
 import org.lemurproject.lucindri.indexer.documentparser.ClueWeb09DocumentParser;
 import org.lemurproject.lucindri.indexer.documentparser.ClueWeb12DocumentParser;
+import org.lemurproject.lucindri.indexer.documentparser.ClueWeb22DocumentParser;
 import org.lemurproject.lucindri.indexer.documentparser.DocumentParser;
 import org.lemurproject.lucindri.indexer.documentparser.Gov2DocumentParser;
 import org.lemurproject.lucindri.indexer.documentparser.IndriGov2DocumentParser;
 import org.lemurproject.lucindri.indexer.documentparser.JsonDocumentParser;
 import org.lemurproject.lucindri.indexer.documentparser.MARCODocumentParser;
+import org.lemurproject.lucindri.indexer.documentparser.MARCOFullDocumentParser;
 import org.lemurproject.lucindri.indexer.documentparser.TextDocumentParser;
 import org.lemurproject.lucindri.indexer.documentparser.TrecTextDocumentParser;
 import org.lemurproject.lucindri.indexer.documentparser.WARCDocumentParser;
@@ -55,8 +57,10 @@ public class DocumentParserFactory {
 		docParserMap.put("warc", WARCDocumentParser.class);
 		docParserMap.put("cw09", ClueWeb09DocumentParser.class);
 		docParserMap.put("cw12", ClueWeb12DocumentParser.class);
+		docParserMap.put("cw22", ClueWeb22DocumentParser.class);
 		docParserMap.put("car", CARDocumentParser.class);
 		docParserMap.put("marco", MARCODocumentParser.class);
+		docParserMap.put("marcofull", MARCOFullDocumentParser.class);
 		docParserMap.put("trectext", TrecTextDocumentParser.class);
 	}
 
